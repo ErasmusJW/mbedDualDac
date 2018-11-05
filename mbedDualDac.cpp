@@ -19,12 +19,9 @@ __IO uint8_t ubSelectedWavesForm = 1;
 __IO uint8_t ubKeyPressed = SET;
 
 
-
-
- void InitDacShit()
- {
-   
-    const uint8_t halfway = SYMBOLS_PERTRANSFER/2 +1;
+dacOutputADC::dacOutputADC()
+{
+      const uint8_t halfway = SYMBOLS_PERTRANSFER/2 +1;
     const uint8_t incPerHalf = 255/halfway;
     
      bool bToggle = 0;
@@ -55,13 +52,23 @@ __IO uint8_t ubKeyPressed = SET;
 
 
     DAC_Ch1_EscalatorConfig();
+}
+
+dacOutputADC::~dacOutputADC()
+{
+}
+
+ void InitDacShit()
+ {
+   
+
  }
 
 
 
 
 
-void TIM6_Config(void)
+void dacOutputADC::TIM6_Config(void)
 {
   static TIM_HandleTypeDef  htim;
   TIM_MasterConfigTypeDef sMasterConfig;
@@ -96,7 +103,7 @@ void TIM6_Config(void)
 
 
 
-static void DAC_Ch1_EscalatorConfig(void)
+ void dacOutputADC::DAC_Ch1_EscalatorConfig(void)
 {
   /*##-1- Initialize the DAC peripheral ######################################*/
   if (HAL_DAC_Init(&DacHandleI) != HAL_OK)
@@ -151,7 +158,7 @@ static void DAC_Ch1_EscalatorConfig(void)
     while(1){};
   }
 
-    if (HAL_DAC_Start_DMA(&DacHandleQ, MBED_CONF_MBEDDUALDAC_DAC_CHANNEL_Q, (uint32_t *)DataToTransmit_Q, SYMBOLS_PERTRANSFER, DAC_ALIGN_8B_R) != HAL_OK)
+  if (HAL_DAC_Start_DMA(&DacHandleQ, MBED_CONF_MBEDDUALDAC_DAC_CHANNEL_Q, (uint32_t *)DataToTransmit_Q, SYMBOLS_PERTRANSFER, DAC_ALIGN_8B_R) != HAL_OK)
   {
     /* Start DMA Error */
     led2 = 1;
@@ -163,7 +170,14 @@ static void DAC_Ch1_EscalatorConfig(void)
  pc.printf(" DAC dma start");
 }
 
+ void  dacOutputADC::SendDataI(uint8_t * dataI, uint32_t iLength)
+{
 
+}
+ void dacOutputADC::SendDataQ(uint8_t * dataQ, uint32_t iLength)
+{
+
+}
 
 
 extern "C" {
@@ -177,6 +191,19 @@ extern "C" {
     void MBED_CONF_MBEDDUALDAC_DAC_Q_IRQ_HANDLER(void)
     {
      HAL_DMA_IRQHandler(DacHandleI.DMA_Handle1);
+    }
+
+    void DacConfigDmaHandle(DMA_HandleTypeDef & handle )
+    {
+        handle.Init.Direction = DMA_MEMORY_TO_PERIPH;
+        handle.Init.PeriphInc = DMA_PINC_DISABLE;
+        handle.Init.MemInc = DMA_MINC_ENABLE;
+        handle.Init.PeriphDataAlignment = DMA_PDATAALIGN_BYTE;
+        handle.Init.MemDataAlignment = DMA_MDATAALIGN_BYTE;
+        //handle.Init.Mode = DMA_NORMAL;
+        handle.Init.Mode = DMA_CIRCULAR;
+        handle.Init.Priority = DMA_PRIORITY_HIGH;
+        //handle.Init.FIFOMode = DMA_FIFOMODE_ENABLE;
     }
 
     void HAL_DAC_MspInit(DAC_HandleTypeDef *hdac)
@@ -213,37 +240,19 @@ extern "C" {
         /*##-3- Configure the DMA ##########################################*/
         /* Set the parameters to be configured for DACx_DMA_STREAM */
         hdma_dac1I.Instance = MBED_CONF_MBEDDUALDAC_DMA_STREAM_I;
-
         hdma_dac1I.Init.Channel  = MBED_CONF_MBEDDUALDAC_DMA_CHANNEL_I;
 
-        hdma_dac1I.Init.Direction = DMA_MEMORY_TO_PERIPH;
-        hdma_dac1I.Init.PeriphInc = DMA_PINC_DISABLE;
-        hdma_dac1I.Init.MemInc = DMA_MINC_ENABLE;
-        hdma_dac1I.Init.PeriphDataAlignment = DMA_PDATAALIGN_BYTE;
-        hdma_dac1I.Init.MemDataAlignment = DMA_MDATAALIGN_BYTE;
-        //hdma_dac1I.Init.Mode = DMA_NORMAL;
-        hdma_dac1I.Init.Mode = DMA_CIRCULAR;
-        hdma_dac1I.Init.Priority = DMA_PRIORITY_HIGH;
-        //hdma_dac1I.Init.FIFOMode = DMA_FIFOMODE_ENABLE;
-        HAL_DMA_Init(&hdma_dac1I);
+        DacConfigDmaHandle(hdma_dac1I);
 
 
-                /*##-3- Configure the DMA ##########################################*/
-        /* Set the parameters to be configured for DACx_DMA_STREAM */
+    
         hdma_dac1Q.Instance = MBED_CONF_MBEDDUALDAC_DMA_STREAM_Q;
-
         hdma_dac1Q.Init.Channel  = MBED_CONF_MBEDDUALDAC_DMA_CHANNEL_Q;
 
-        hdma_dac1Q.Init.Direction = DMA_MEMORY_TO_PERIPH;
-        hdma_dac1Q.Init.PeriphInc = DMA_PINC_DISABLE;
-        hdma_dac1Q.Init.MemInc = DMA_MINC_ENABLE;
-        hdma_dac1Q.Init.PeriphDataAlignment = DMA_PDATAALIGN_BYTE;
-        hdma_dac1Q.Init.MemDataAlignment = DMA_MDATAALIGN_BYTE;
-        //hdma_dac1Q.Init.Mode = DMA_NORMAL;
-        hdma_dac1Q.Init.Mode = DMA_CIRCULAR;
-        hdma_dac1Q.Init.Priority = DMA_PRIORITY_HIGH;
-        //hdma_dac1Q.Init.FIFOMode = DMA_FIFOMODE_ENABLE;
-         HAL_DMA_Init(&hdma_dac1I);
+        DacConfigDmaHandle(hdma_dac1Q);
+
+
+        HAL_DMA_Init(&hdma_dac1I);
         HAL_DMA_Init(&hdma_dac1Q);
         
 
