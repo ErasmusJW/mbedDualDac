@@ -5,8 +5,8 @@
 
 
 
-uint8_t DataToTransmit_I [SYMBOLS_PERTRANSFER] ;
-uint8_t DataToTransmit_Q [SYMBOLS_PERTRANSFER] ;
+// uint8_t DataToTransmit_I [SYMBOLS_PERTRANSFER] ;
+// uint8_t DataToTransmit_Q [SYMBOLS_PERTRANSFER] ;
 
 
 DAC_HandleTypeDef    DacHandleI;
@@ -39,13 +39,13 @@ dacOutputADC::dacOutputADC()
        
     // }
 
-    for (size_t i = 0; i < SYMBOLS_PERTRANSFER; i++) //51 - 99
-    {
-       DataToTransmit_I[i] = bToggle * 255;
-       DataToTransmit_Q[i] = bToggle * 255;
-       bToggle = !bToggle;
+    // for (size_t i = 0; i < SYMBOLS_PERTRANSFER; i++) //51 - 99
+    // {
+    //    DataToTransmit_I[i] = bToggle * 255;
+    //    DataToTransmit_Q[i] = bToggle * 255;
+    //    bToggle = !bToggle;
        
-    }
+    // }
     DacHandleI.Instance = DAC;
     DacHandleQ.Instance = DAC;
     TIM6_Config();
@@ -81,7 +81,7 @@ void dacOutputADC::TIM6_Config(void)
   //(freq / 2) = desiredfreqeny ( x)
     // x = 108 000 000 / desired freqenxy
 
-  htim.Init.Period            = 2700;
+  htim.Init.Period            = 27000;
   htim.Init.Prescaler         = 0;
   htim.Init.ClockDivision     = 0;
   htim.Init.CounterMode       = TIM_COUNTERMODE_UP;
@@ -148,24 +148,7 @@ void dacOutputADC::TIM6_Config(void)
 
   pc.printf(" DAC Channel configuration complete");
 
-  /*##-2- Enable DAC selected channel and associated DMA #############################*/
-  if (HAL_DAC_Start_DMA(&DacHandleI, MBED_CONF_MBEDDUALDAC_DAC_CHANNEL_I, (uint32_t *)DataToTransmit_I, SYMBOLS_PERTRANSFER, DAC_ALIGN_8B_R) != HAL_OK)
-  {
-    /* Start DMA Error */
-    led2 = 1;
-    pc.printf(" DAC Start DMA Error  ######################################### Error");
-    wait(1);
-    while(1){};
-  }
 
-  if (HAL_DAC_Start_DMA(&DacHandleQ, MBED_CONF_MBEDDUALDAC_DAC_CHANNEL_Q, (uint32_t *)DataToTransmit_Q, SYMBOLS_PERTRANSFER, DAC_ALIGN_8B_R) != HAL_OK)
-  {
-    /* Start DMA Error */
-    led2 = 1;
-    pc.printf(" DAC Start DMA Error  ######################################### Error");
-    wait(1);
-    while(1){};
-  }
 
  pc.printf(" DAC dma start");
 }
@@ -173,9 +156,30 @@ void dacOutputADC::TIM6_Config(void)
  void  dacOutputADC::SendDataI(uint8_t * dataI, uint32_t iLength)
 {
 
+    /*##-2- Enable DAC selected channel and associated DMA #############################*/
+    if (HAL_DAC_Start_DMA(&DacHandleI, MBED_CONF_MBEDDUALDAC_DAC_CHANNEL_I, (uint32_t *)dataI, iLength, DAC_ALIGN_8B_R) != HAL_OK)
+    {
+      /* Start DMA Error */
+      led2 = 1;
+      pc.printf(" DAC Start DMA Error  ######################################### Error");
+      wait(1);
+      while(1){};
+    }
+
+
 }
  void dacOutputADC::SendDataQ(uint8_t * dataQ, uint32_t iLength)
 {
+
+
+    if (HAL_DAC_Start_DMA(&DacHandleQ, MBED_CONF_MBEDDUALDAC_DAC_CHANNEL_Q, (uint32_t *)dataQ, iLength, DAC_ALIGN_8B_R) != HAL_OK)
+    {
+      /* Start DMA Error */
+      led2 = 1;
+      pc.printf(" DAC Start DMA Error  ######################################### Error");
+      wait(1);
+      while(1){};
+    }
 
 }
 
@@ -190,7 +194,16 @@ extern "C" {
     }
     void MBED_CONF_MBEDDUALDAC_DAC_Q_IRQ_HANDLER(void)
     {
-     HAL_DMA_IRQHandler(DacHandleI.DMA_Handle1);
+     HAL_DMA_IRQHandler(DacHandleQ.DMA_Handle1);
+    }
+
+    void HAL_DAC_ConvCpltCallbackCh1(DAC_HandleTypeDef* hdac)
+    {
+      led2 = !led2;
+    }
+    void HAL_DACEx_ConvCpltCallbackCh2(DAC_HandleTypeDef* hdac)
+    {
+      led3 = !led3;
     }
 
     void DacConfigDmaHandle(DMA_HandleTypeDef & handle )
@@ -200,8 +213,8 @@ extern "C" {
         handle.Init.MemInc = DMA_MINC_ENABLE;
         handle.Init.PeriphDataAlignment = DMA_PDATAALIGN_BYTE;
         handle.Init.MemDataAlignment = DMA_MDATAALIGN_BYTE;
-        //handle.Init.Mode = DMA_NORMAL;
-        handle.Init.Mode = DMA_CIRCULAR;
+        handle.Init.Mode = DMA_NORMAL;
+        //handle.Init.Mode = DMA_CIRCULAR;
         handle.Init.Priority = DMA_PRIORITY_HIGH;
         //handle.Init.FIFOMode = DMA_FIFOMODE_ENABLE;
     }

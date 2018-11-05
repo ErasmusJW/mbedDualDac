@@ -6,15 +6,15 @@
 
 #include <limits>
 
-#define SYMBOLS_PERTRANSFER 100
+#define SYMBOLS_PERTRANSFER 1000
 
 
 class dacOutputADC
 {
 public:
   dacOutputADC();
-  static void SendDataI(uint8_t * dataI, uint32_t iLength);
-  static void SendDataQ(uint8_t * dataQ, uint32_t iLength);
+  static void SendDataI(uint8_t * dataI, const uint32_t iLength);
+  static void SendDataQ(uint8_t * dataQ, const uint32_t iLength);
 
 
   dacOutputADC(dacOutputADC &&) = default;
