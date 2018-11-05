@@ -174,7 +174,7 @@ extern "C" {
     {
      HAL_DMA_IRQHandler(DacHandleI.DMA_Handle2);
     }
-    void MBED_CONF_MBEDDUALDAC_DAC_DAC_Q_IRQ_HANDLER(void)
+    void MBED_CONF_MBEDDUALDAC_DAC_Q_IRQ_HANDLER(void)
     {
      HAL_DMA_IRQHandler(DacHandleI.DMA_Handle1);
     }
