@@ -122,7 +122,7 @@ static void DAC_Ch1_EscalatorConfig(void)
   DACsConfigQ.DAC_Trigger = DAC_TRIGGER_T7_TRGO;
   DACsConfigQ.DAC_OutputBuffer = DAC_OUTPUTBUFFER_ENABLE;
 
-  if (HAL_DAC_ConfigChannel(&DacHandleI, &DACsConfigI, DACx_CHANNEL_I) != HAL_OK)
+  if (HAL_DAC_ConfigChannel(&DacHandleI, &DACsConfigI, MBED_CONF_MBEDDUALDAC_DAC_CHANNEL_I) != HAL_OK)
   {
     /* Channel configuration Error */
     led2 = 1;
@@ -130,7 +130,7 @@ static void DAC_Ch1_EscalatorConfig(void)
     wait(1);
     while(1){};
   }
-  if (HAL_DAC_ConfigChannel(&DacHandleQ, &DACsConfigQ, DACx_CHANNEL_Q) != HAL_OK)
+  if (HAL_DAC_ConfigChannel(&DacHandleQ, &DACsConfigQ, MBED_CONF_MBEDDUALDAC_DAC_CHANNEL_Q) != HAL_OK)
   {
     /* Channel configuration Error */
     led2 = 1;
@@ -142,7 +142,7 @@ static void DAC_Ch1_EscalatorConfig(void)
   pc.printf(" DAC Channel configuration complete");
 
   /*##-2- Enable DAC selected channel and associated DMA #############################*/
-  if (HAL_DAC_Start_DMA(&DacHandleI, DACx_CHANNEL_I, (uint32_t *)DataToTransmit_I, SYMBOLS_PERTRANSFER, DAC_ALIGN_8B_R) != HAL_OK)
+  if (HAL_DAC_Start_DMA(&DacHandleI, MBED_CONF_MBEDDUALDAC_DAC_CHANNEL_I, (uint32_t *)DataToTransmit_I, SYMBOLS_PERTRANSFER, DAC_ALIGN_8B_R) != HAL_OK)
   {
     /* Start DMA Error */
     led2 = 1;
@@ -151,7 +151,7 @@ static void DAC_Ch1_EscalatorConfig(void)
     while(1){};
   }
 
-    if (HAL_DAC_Start_DMA(&DacHandleQ, DACx_CHANNEL_Q, (uint32_t *)DataToTransmit_Q, SYMBOLS_PERTRANSFER, DAC_ALIGN_8B_R) != HAL_OK)
+    if (HAL_DAC_Start_DMA(&DacHandleQ, MBED_CONF_MBEDDUALDAC_DAC_CHANNEL_Q, (uint32_t *)DataToTransmit_Q, SYMBOLS_PERTRANSFER, DAC_ALIGN_8B_R) != HAL_OK)
   {
     /* Start DMA Error */
     led2 = 1;
@@ -170,11 +170,11 @@ extern "C" {
 
     
     //has to be fucking c poes
-    void DACx_DMA_IRQHandler_I(void)
+    void MBED_CONF_MBEDDUALDAC_DAC_I_IRQ_HANDLER(void)
     {
      HAL_DMA_IRQHandler(DacHandleI.DMA_Handle2);
     }
-    void DACx_DMA_IRQHandler_Q(void)
+    void MBED_CONF_MBEDDUALDAC_DAC_DAC_Q_IRQ_HANDLER(void)
     {
      HAL_DMA_IRQHandler(DacHandleI.DMA_Handle1);
     }
@@ -187,34 +187,34 @@ extern "C" {
         static DMA_HandleTypeDef  hdma_dac1Q;
 
         /* DAC Periph clock enable */
-        DACx_CLK_ENABLE();
+        MBED_CONF_MBEDDUALDAC_DAC_CLK_ENABLE();
 
 
         /*##-1- Enable peripherals and GPIO Clocks #################################*/
         /* Enable GPIO clock ****************************************/
-        DACx_CHANNEL_GPIO_CLK_ENABLE();
+        MBED_CONF_MBEDDUALDAC_CHANNEL_GPIO_CLK_ENABLE();
 
         /* DMA1 clock enable */
         __HAL_RCC_DMA1_CLK_ENABLE();
 
         /*##-2- Configure peripheral GPIO ##########################################*/
         /* DAC Channel1 GPIO pin configuration */
-        GPIO_InitStructI.Pin = DACx_CHANNEL_PIN_I;
+        GPIO_InitStructI.Pin = MBED_CONF_MBEDDUALDAC_PIN_I;
         GPIO_InitStructI.Mode = GPIO_MODE_ANALOG;
         GPIO_InitStructI.Pull = GPIO_NOPULL;
-        HAL_GPIO_Init(DACx_CHANNEL_GPIO_PORT, &GPIO_InitStructI);
+        HAL_GPIO_Init(MBED_CONF_MBEDDUALDAC_PIN_PORT_I, &GPIO_InitStructI);
 
                 /* DAC Channel1 GPIO pin configuration */
-        GPIO_InitStructQ.Pin = DACx_CHANNEL_PIN_Q;
+        GPIO_InitStructQ.Pin = MBED_CONF_MBEDDUALDAC_PIN_Q;
         GPIO_InitStructQ.Mode = GPIO_MODE_ANALOG;
         GPIO_InitStructQ.Pull = GPIO_NOPULL;
-        HAL_GPIO_Init(DACx_CHANNEL_GPIO_PORT, &GPIO_InitStructQ);
+        HAL_GPIO_Init(MBED_CONF_MBEDDUALDAC_PIN_PORT_Q, &GPIO_InitStructQ);
 
         /*##-3- Configure the DMA ##########################################*/
         /* Set the parameters to be configured for DACx_DMA_STREAM */
-        hdma_dac1I.Instance = DACx_DMA_INSTANCE_I;
+        hdma_dac1I.Instance = MBED_CONF_MBEDDUALDAC_DMA_STREAM_I;
 
-        hdma_dac1I.Init.Channel  = DACx_DMA_CHANNEL;
+        hdma_dac1I.Init.Channel  = MBED_CONF_MBEDDUALDAC_DMA_CHANNEL_I;
 
         hdma_dac1I.Init.Direction = DMA_MEMORY_TO_PERIPH;
         hdma_dac1I.Init.PeriphInc = DMA_PINC_DISABLE;
@@ -230,9 +230,9 @@ extern "C" {
 
                 /*##-3- Configure the DMA ##########################################*/
         /* Set the parameters to be configured for DACx_DMA_STREAM */
-        hdma_dac1Q.Instance = DACx_DMA_INSTANCE_Q;
+        hdma_dac1Q.Instance = MBED_CONF_MBEDDUALDAC_DMA_STREAM_Q;
 
-        hdma_dac1Q.Init.Channel  = DACx_DMA_CHANNEL;
+        hdma_dac1Q.Init.Channel  = MBED_CONF_MBEDDUALDAC_DMA_CHANNEL_Q;
 
         hdma_dac1Q.Init.Direction = DMA_MEMORY_TO_PERIPH;
         hdma_dac1Q.Init.PeriphInc = DMA_PINC_DISABLE;
@@ -253,10 +253,11 @@ extern "C" {
 
         /*##-4- Configure the NVIC for DMA #########################################*/
         /* Enable the DMA1_Stream5 IRQ Channel */
-        HAL_NVIC_SetPriority(DACx_DMA_IRQn_I, 2, 0);
-        HAL_NVIC_SetPriority(DACx_DMA_IRQn_Q, 2, 0);
-        HAL_NVIC_EnableIRQ(DACx_DMA_IRQn_I);
-        HAL_NVIC_EnableIRQ(DACx_DMA_IRQn_Q);
+        HAL_NVIC_SetPriority(MBED_CONF_MBEDDUALDAC_DAC_I_IRQN, 2, 0);
+        HAL_NVIC_SetPriority(MBED_CONF_MBEDDUALDAC_DAC_Q_IRQN, 2, 0);
+        
+        HAL_NVIC_EnableIRQ(MBED_CONF_MBEDDUALDAC_DAC_I_IRQN);
+        HAL_NVIC_EnableIRQ(MBED_CONF_MBEDDUALDAC_DAC_Q_IRQN);
 
     }
 
@@ -269,13 +270,13 @@ extern "C" {
     void HAL_DAC_MspDeInit(DAC_HandleTypeDef *hdac)
     {
         /*##-1- Reset peripherals ##################################################*/
-        DACx_FORCE_RESET();
-        DACx_RELEASE_RESET();
+        MBED_CONF_MBEDDUALDAC_DAC_FORCE_RESET();
+        MBED_CONF_MBEDDUALDAC_DAC_RELEASE_RESET();
 
         /*##-2- Disable peripherals and GPIO Clocks ################################*/
         /* De-initialize the DAC Channel1 GPIO pin */
-        HAL_GPIO_DeInit(DACx_CHANNEL_GPIO_PORT, DACx_CHANNEL_PIN_I);
-         HAL_GPIO_DeInit(DACx_CHANNEL_GPIO_PORT, DACx_CHANNEL_PIN_Q);
+        HAL_GPIO_DeInit(MBED_CONF_MBEDDUALDAC_PIN_PORT_I, MBED_CONF_MBEDDUALDAC_PIN_I);
+         HAL_GPIO_DeInit(MBED_CONF_MBEDDUALDAC_PIN_PORT_Q, MBED_CONF_MBEDDUALDAC_PIN_Q);
 
         // /*##-3- Disable the DMA Stream ############################################*/
         // /* De-Initialize the DMA Stream associate to DAC_Channel1 */

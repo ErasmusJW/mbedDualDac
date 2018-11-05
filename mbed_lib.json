@@ -1,6 +1,148 @@
 {
     "name" : "mbedDualDac",
     "config" :{
+        "CHANNEL_GPIO_CLK_ENABLE": 
+        {
+            "help": "HAL function for DAC CHANNEL kind of hardcoded to stm value, should not have to change - Macro name MBED_CONF_MBEDDUALDAC_CHANNEL_GPIO_CLK_ENABLE",
+            "required" : true,
+            "value" : "__HAL_RCC_GPIOA_CLK_ENABLE"
+        
+        },
+        "DAC_CLK_ENABLE": 
+        {
+            "help": "HAL function for DAC_CLOCK_ENABLE, should not have to change - Macro name MBED_CONF_MBEDDUALDAC_DAC_CLK_ENABLE",
+            "required" : true,
+            "value" : "__HAL_RCC_DAC_CLK_ENABLE"
+        
+        },
+
+        "DAC_FORCE_RESET": 
+        {
+            "help": "HAL function for DAC_FORCE_RESET, should not have to change - Macro name MBED_CONF_MBEDDUALDAC_DAC_FORCE_RESET",
+            "required" : true,
+            "value" : "__HAL_RCC_DAC_FORCE_RESET"
+        
+        },
+
+        
+        "DAC_RELEASE_RESET": {
+            "help": "HAL function for DAC_FORCE_RESET, should not have to change - Macro name MBED_CONF_MBEDDUALDAC_DAC_RELEASE_RESET",
+            "required" : true,
+            "value" : "__HAL_RCC_DAC_RELEASE_RESET"
+        
+        },
+
+        "DMA_CHANNEL_I" :
+        {
+            "help": "HAL function DMA CHANNEL for I channel - I channel means Channel 2, check dma documentation MBED_CONF_MBEDDUALDAC_DMA_CHANNEL_I",
+            "required" : true,
+            "value" : "DMA_CHANNEL_7"
+        
+        },
+
+        "DMA_CHANNEL_Q" :
+        {
+            "help": "HAL function DMA CHANNEL for Q channel - Q channel means channel 1, check dma documentation MBED_CONF_MBEDDUALDAC_DMA_CHANNEL_Q can be same as I channel",
+            "required" : true,
+            "value" : "DMA_CHANNEL_7"
+        
+        },
+
+        "DMA_STREAM_I" :
+        {
+            "help": "HAL function DMA CHANNEL for I channel - I channel means Channel 2, check dma documentation MBED_CONF_MBEDDUALDAC_DMA_STREAM_I",
+            "required" : true,
+            "value" : "DMA1_Stream6"
+        
+        },
+
+        "DMA_STREAM_Q" :
+        {
+            "help": "HAL function DMA CHANNEL for Q channel - Q channel means channel 1, check dma documentation MBED_CONF_MBEDDUALDAC_DMA_STREAM_Q can be same as I channel",
+            "required" : true,
+            "value" : "DMA1_Stream5"
+        
+        },
+
+        
+        "DAC_CHANNEL_I" :
+        {
+            "help": "HAL function DMA CHANNEL for I channel - I channel means channel 2, check dma documentation MBED_CONF_MBEDDUALDAC_DAC_CHANNEL_I",
+            "required" : true,
+            "value" : "DAC_CHANNEL_2"
+        
+        },
+
+        "DAC_CHANNEL_Q" :
+        {
+            "help": "HAL function DMA CHANNEL for Q channel - Q channel means channel 1, check dma documentation MBED_CONF_MBEDDUALDAC_DAC_CHANNEL_Q can be same as I cahnnel",
+            "required" : true,
+            "value" : "DAC_CHANNEL_1"
+        
+        },
+
+        "DAC_I_IRQN" :
+        {
+            "help": "HAL function DMA CHANNEL for I channel - I channel means channel 2, check dma documentation MBED_CONF_MBEDDUALDAC_DAC_I_IRQN",
+            "required" : true,
+            "value" : "DMA1_Stream6_IRQn"
+        
+        },
+
+        "DAC_Q_IRQN" :
+        {
+            "help": "HAL function DMA CHANNEL for Q channel - Q channel means channel 1, check dma documentation MBED_CONF_MBEDDUALDAC_DAC_Q_IRQN can be same as I cahnnel",
+            "required" : true,
+            "value" : "DMA1_Stream5_IRQn"
+        
+        },
+        "DAC_I_IRQ_HANDLER" :
+        {
+            "help": "HAL function DMA CHANNEL for I channel - I channel means channel 2, check dma documentation MBED_CONF_MBEDDUALDAC_DAC_I_IRQ_HANDLER",
+            "required" : true,
+            "value" : "DMA1_Stream6_IRQHandler"
+        
+        },
+
+        "DAC_Q_IRQ_HANDLER" :
+        {
+            "help": "HAL function DMA CHANNEL for Q channel - Q channel means channel 1, check dma documentation MBED_CONF_MBEDDUALDAC_DAC_Q_IRQ_HANDLER can be same as I cahnnel",
+            "required" : true,
+            "value" : "DMA1_Stream5_IRQHandler"
+        
+        },
+
+        "PIN_I" :
+        {
+            "help": "HAL function DMA CHANNEL for Q channel - Q channel means channel 1, check dma documentation MBED_CONF_MBEDDUALDAC_PIN_I can be same as I cahnnel",
+            "required" : true,
+            "value" : "GPIO_PIN_5"
+        
+        },
+
+        "PIN_Q" :
+        {
+            "help": "HAL function DMA CHANNEL for Q channel - Q channel means channel 1, check dma documentation MBED_CONF_MBEDDUALDAC_PIN_Q can be same as I cahnnel",
+            "required" : true,
+            "value" : "GPIO_PIN_4"
+        
+        },
+
+        "PIN_PORT_I" :
+        {
+            "help": "HAL function DMA CHANNEL for Q channel - Q channel means channel 1, check dma documentation MBED_CONF_MBEDDUALDAC_PIN_PORT_I can be same as I cahnnel",
+            "required" : true,
+            "value" : "GPIOA"
+        
+        },
+
+        "PIN_PORT_Q" :
+        {
+            "help": "HAL function DMA CHANNEL for Q channel - Q channel means channel 1, check dma documentation MBED_CONF_MBEDDUALDAC_PIN_PORT_Q can be same as I cahnnel",
+            "required" : true,
+            "value" : "GPIOA"
+        
+        }
 
 
     },
